@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import Route from './interfaces/routes.interface';
+import {Routes} from './interfaces/routes.interface';
 import errorMiddleware from './middlewares/error.middleware';
 
 
@@ -8,7 +8,7 @@ class App {
     public port: string | number;
     public env: boolean;
 
-    constructor(routes: Route[]) {
+    constructor(routes: Routes[]) {
         this.app = express();
         this.port = process.env.PORT || 3000;
         this.env = process.env.NODE_ENV === 'production';
@@ -46,7 +46,7 @@ class App {
         }));
     }
 
-    private initializeRoutes(routes: Route[]) {
+    private initializeRoutes(routes: Routes[]) {
         routes.forEach(route => {
             this.app.use('/', route.router);
         });
