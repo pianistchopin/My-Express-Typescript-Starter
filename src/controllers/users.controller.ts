@@ -1,14 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import { CreateUserDto } from "@dtos/user.dto";
-import { User} from "@interfaces/users.interface";
 import userService from "@services/users.service";
+import { UserEntity } from "../entity/userEntity"
 
-class UsersContoller {
+class UsersController {
     public userService = new userService();
     
     public getUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> =>{
         try{
-            const findAllUsersData: User[] = await this.userService.findAllUser();
+            const findAllUsersData: UserEntity[] = await this.userService.findAllUser();
             
             res.status(200).json({data: findAllUsersData, message: 'findAll'});
         } catch (error){
@@ -17,4 +17,4 @@ class UsersContoller {
     };
 }
 
-export default UsersContoller;
+export default UsersController;

@@ -1,6 +1,12 @@
 import express, { Request, Response } from 'express';
 import {Routes} from './interfaces/routes.interface';
 import errorMiddleware from './middlewares/error.middleware';
+import {
+    Connection,
+    ConnectionOptions,
+    createConnection,
+    getConnection
+} from 'typeorm'
 
 
 class App {
@@ -13,6 +19,7 @@ class App {
         this.port = process.env.PORT || 3000;
         this.env = process.env.NODE_ENV === 'production';
 
+        this.createConnection();
         this.initializeMiddlewares();
         this.initializeRoutes(routes);
         this.initializeErrorHandling();
@@ -54,6 +61,34 @@ class App {
 
     private initializeErrorHandling() {
         this.app.use(errorMiddleware);
+    }
+    
+    public createConnection(){
+
+        const connected = this.isConnected()
+        if (connected) {
+            return getConnection()
+        }
+        const config: ConnectionOptions = {
+            "type": "mysql",
+            "host": "localhost",
+            "port": 3306,
+            "username": "root",
+            "password": "",
+            "database": "test",
+            "entities": ["src/entity/*.ts"],
+            "logging": true,
+            "synchronize": true
+        }
+        createConnection(config)
+    }
+
+    public isConnected(): boolean {
+        try {
+            return !!getConnection()
+        } catch (e) {
+            return false
+        }
     }
 }
 
