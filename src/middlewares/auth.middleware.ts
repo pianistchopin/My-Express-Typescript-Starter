@@ -3,7 +3,7 @@ import { NextFunction, Response } from "express";
 import jwt from "jsonwebtoken";
 import { HttpException } from "@exceptions/HttpException";
 import { DataStoredInToken, RequestWithUser } from "@interfaces/auth.interface";
-import userModel from "@models/users.model";
+import {User} from "@entity/user";
 
 const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction ) => {
     try {
@@ -13,13 +13,14 @@ const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFun
             const secretKey: string = 'secretKey';
             const verificationResponse = (await jwt.verify(Authorization, secretKey)) as DataStoredInToken;
             const userId = verificationResponse.id;
-            const findUser = userModel.find(user => user.id === userId);
+            const users: User[] = await User.find();
+            const findUser = users.find(user => user.id === userId);
             
             if(findUser){
                 req.user = findUser;
                 next();
             }else {
-                next(new HttpException(401, 'Wrong authentication token1'));
+                next(new HttpException(401, 'Wrong authentication token'));
             }
         } else {
             next(new HttpException(404, 'Authentication token missing'));
