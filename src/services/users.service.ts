@@ -2,12 +2,13 @@ import bcrypt from "bcrypt";
 import { CreateUserDto } from "@dtos/user.dto";
 import { HttpException } from "@exceptions/HttpException";
 import { isEmpty } from "@utils/util";
+import {getManager, getRepository} from "typeorm";
 import { User } from "../entity/user"
 
 class UserService {
     
     public async findAllUser(): Promise<User[]>{
-        const users: User[] = await User.find();
+        const users = getRepository(User).createQueryBuilder().where("email = :email", {email: "bbbb.c@gmail.com"}).getMany();
         return users;
     }
     
